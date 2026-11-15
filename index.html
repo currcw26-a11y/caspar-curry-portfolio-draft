@@ -58,7 +58,9 @@
     backdrop-filter:blur(14px) saturate(1.2); -webkit-backdrop-filter:blur(14px) saturate(1.2)}
   .site-header.scrolled{padding-top:13px; padding-bottom:13px}
   .site-header.scrolled::before{opacity:1}
-  .brand{font-family:var(--serif); font-size:26px; font-weight:600; text-decoration:none; line-height:1; letter-spacing:.01em}
+  .brand{font-family:var(--serif); font-size:26px; font-weight:600; text-decoration:none; line-height:1; letter-spacing:.01em;
+    position:relative; z-index:70; cursor:pointer; transition:opacity .3s var(--ease)}
+  .brand:hover{opacity:.7}
   .brand em{color:var(--green); font-weight:500}
   .nav{display:flex; align-items:center; gap:clamp(18px,2.6vw,34px)}
   .nav a{font-size:14px; letter-spacing:.04em; text-decoration:none; position:relative; padding:4px 0}
@@ -268,15 +270,6 @@
   .lb-close{position:absolute; top:24px; right:var(--gutter); z-index:2; font-size:12px; letter-spacing:.14em; text-transform:uppercase; padding:10px 0}
   .lb-close:hover{color:#a8d4a5}
 
-  /* ---------- Cursor ---------- */
-  .cursor{position:fixed; left:0; top:0; z-index:80; width:84px; height:84px; margin:-42px 0 0 -42px; border-radius:50%;
-    background:var(--green); color:#f3eee3; display:grid; place-items:center; font-size:12px; font-weight:500; letter-spacing:.14em; text-transform:uppercase;
-    pointer-events:none; transform:scale(0); transition:transform .4s var(--ease)}
-  :root[data-theme="dark"] .cursor{color:#151412}
-  .cursor.on{transform:scale(1)}
-  @media not all and (hover:hover) and (pointer:fine){ .cursor{display:none} }
-  @media (hover:hover) and (pointer:fine){ .piece, .mural, .hero-art-btn, .ribbon button{cursor:none} }
-
   /* ---------- Reveal ---------- */
   .reveal{opacity:0; transform:translateY(28px); transition:opacity 1s var(--ease), transform 1s var(--ease)}
   .reveal.in{opacity:1; transform:none}
@@ -289,8 +282,9 @@
     .mural-grid{grid-template-columns:1fr}
     .mural:nth-child(2){margin-top:24px}
     .lightbox{grid-template-columns:1fr; grid-template-rows:minmax(0,1fr) auto}
-    .lb-stage{padding:64px 16px 4px}
-    .lb-stage img{max-height:calc(100svh - 340px)}
+    .lb-stage{padding:64px 16px 8px; overflow:hidden}
+    .lb-stage img{max-height:calc(100% - 28px); min-height:0}
+    .lb-cap{margin-top:8px; font-size:12px; min-height:0}
     .lb-info{border-left:0; border-top:1px solid rgba(236,230,218,.12); padding:18px var(--gutter) 22px; max-height:46svh}
     .lb-info h3{font-size:30px; margin-bottom:4px}
     .lb-medium{margin-bottom:10px}
@@ -306,10 +300,66 @@
     .menu-open .nav{opacity:1; visibility:visible}
     .nav a{font-family:var(--serif); font-weight:600; font-size:46px; letter-spacing:0}
     .theme-toggle{width:26px; height:26px; margin:16px 0 0}
-    .stats{grid-template-columns:1fr}
-    .stat + .stat{border-left:0; border-top:1px solid var(--line); padding-left:0}
-    .facts{grid-template-columns:1fr}
     .footer{flex-direction:column; align-items:center; text-align:center}
+
+    /* --- phone layout --- */
+    .section{padding-top:72px; padding-bottom:72px}
+    .section-head{margin-bottom:28px; gap:20px}
+    .section-title{font-size:clamp(40px,12vw,56px)}
+
+    /* hero: tighter, so the artwork shows up sooner */
+    .hero{padding:100px var(--gutter) 40px; gap:32px}
+    .hero .label{margin-bottom:18px}
+    .hero-lede{font-size:21px; margin:22px 0 16px; max-width:none}
+    .hero-meta{flex-direction:column; gap:2px; margin-bottom:24px; font-size:13px}
+    .hero-meta li:not(:last-child)::after{content:none}
+    .hero-actions{display:grid; grid-template-columns:1fr 1fr; gap:10px}
+    .btn{justify-content:center; padding:13px 14px; font-size:12px}
+    .hero-art figcaption{margin-top:12px}
+
+    /* the three numbers sit side by side instead of stacking */
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .stat{flex-direction:column; align-items:flex-start; gap:6px; padding:20px 0}
+    .stat + .stat{border-left:1px solid var(--line); border-top:0; padding-left:14px}
+    .stat b{font-size:40px}
+    .stat span{font-size:12px; max-width:none}
+
+    /* filters: one row you can swipe */
+    .filters{flex-wrap:nowrap; overflow-x:auto; width:calc(100% + var(--gutter)); margin-right:calc(-1 * var(--gutter)); padding:2px var(--gutter) 6px 0; scrollbar-width:none}
+    .filters::-webkit-scrollbar{display:none}
+    .filter{flex:none}
+
+    /* gallery: two columns of smaller pictures */
+    .gallery{columns:2; column-gap:12px}
+    .piece{margin-bottom:26px}
+    .piece-meta{flex-direction:column; align-items:flex-start; gap:2px; margin-top:8px; padding-top:8px}
+    .piece-title{font-size:18px; max-width:none}
+    .piece-medium{font-size:11.5px; text-align:left}
+    .piece-tag{top:6px; left:6px; font-size:9px; padding:4px 7px; letter-spacing:.06em}
+
+    /* murals */
+    .mural-cap strong{font-size:26px}
+    .mural p{font-size:14px}
+    .timeline{margin-top:48px; padding-top:36px}
+    .timeline-head{margin-bottom:20px; gap:8px}
+    .timeline-head h3{font-size:32px}
+    .timeline-head .label{order:0}
+
+    /* about: smaller portrait, facts in two columns */
+    .about-portrait{max-width:280px}
+    .bio{margin-top:24px}
+    .bio p{font-size:16px}
+    .facts{grid-template-columns:1fr 1fr; gap:0 18px; margin-top:28px}
+    .facts dd{font-size:19px}
+    .facts div:nth-child(5), .facts div:nth-child(6){grid-column:1 / -1}
+    .statement{font-size:26px; margin-top:36px; padding-top:28px}
+
+    /* viewer: process thumbnails in one swipeable row so Prev/Next stay visible */
+    .lb-thumbs{display:flex; gap:6px; overflow-x:auto; scrollbar-width:none}
+    .lb-thumbs::-webkit-scrollbar{display:none}
+    .lb-thumbs button{flex:none; width:46px}
+    .lb-process h4{margin-bottom:8px}
+    .lb-desc{display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden}
   }
   @media (prefers-reduced-motion: reduce){
     *,*::before,*::after{animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important}
@@ -429,7 +479,6 @@
   </aside>
 </div>
 
-<div class="cursor" id="cursor" aria-hidden="true">View</div>
 
 <script>
 /* =====================================================================
@@ -718,7 +767,7 @@ function openLb(id, group, from, frame = 0){
   list = group; opener = from;
   show(Math.max(0, list.findIndex(w => w.id === id)), frame);
   lb.classList.add("open"); document.documentElement.style.overflow = "hidden";
-  cursor.classList.remove("on"); $("#lbClose").focus();
+  $("#lbClose").focus();
 }
 function closeLb(){ lb.classList.remove("open"); document.documentElement.style.overflow = ""; opener && opener.focus({ preventScroll: true }); }
 const visibleWorks = () => [...document.querySelectorAll(".piece:not([hidden])")].map(p => byId[p.dataset.id]);
@@ -742,16 +791,18 @@ let tx = null;
 $("#lbStage").addEventListener("touchstart", e => { tx = e.touches[0].clientX; }, { passive: true });
 $("#lbStage").addEventListener("touchend", e => { if (tx === null) return; const dx = e.changedTouches[0].clientX - tx; if (Math.abs(dx) > 50) show(pos + (dx < 0 ? 1 : -1)); tx = null; });
 
-/* ---------- Cursor ---------- */
-const cursor = $("#cursor"); let mx = 0, my = 0, cx = 0, cy = 0;
-addEventListener("mousemove", e => { mx = e.clientX; my = e.clientY; cursor.classList.toggle("on", !!e.target.closest(".piece, .mural, .hero-art-btn, .ribbon button") && !lb.classList.contains("open")); });
-(function loop(){ cx += (mx - cx) * .18; cy += (my - cy) * .18; cursor.style.translate = `${cx}px ${cy}px`; requestAnimationFrame(loop); })();
-
 /* ---------- Header, menu, theme, reveal ---------- */
 const header = $("#header");
 addEventListener("scroll", () => header.classList.toggle("scrolled", scrollY > 30), { passive: true });
+const closeMenu = () => { document.body.classList.remove("menu-open"); $("#menuBtn").setAttribute("aria-expanded", false); };
 $("#menuBtn").onclick = () => { const o = document.body.classList.toggle("menu-open"); $("#menuBtn").setAttribute("aria-expanded", o); };
-document.querySelectorAll(".nav a").forEach(a => a.addEventListener("click", () => { document.body.classList.remove("menu-open"); $("#menuBtn").setAttribute("aria-expanded", false); }));
+document.querySelectorAll(".nav a").forEach(a => a.addEventListener("click", closeMenu));
+/* the name in the top bar always takes you back to the top of the page */
+$("#brand").addEventListener("click", e => {
+  e.preventDefault(); closeMenu();
+  scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" });
+  history.replaceState(null, "", location.pathname + location.search);
+});
 
 const root = document.documentElement;
 try { const t = localStorage.getItem("theme"); if (t) root.dataset.theme = t; } catch (e) {}
